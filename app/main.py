@@ -1,9 +1,19 @@
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from app.database import get_db
 from app.schemas import CompanyCreate, ContactCreate, ParseRequest, ParseResponse
 from app.llm import extract_contact_info
 
 app = FastAPI()
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://localhost"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.post("/parse", response_model=ParseResponse)
@@ -14,7 +24,7 @@ def parse_contact(request: ParseRequest, db=Depends(get_db)):
     """
     try:
         # Extract contact info using LLM
-        extracted = extract_contact_info(request.text)
+        extracted = extract_contact_info(request.text, model_name=request.llm)
         
         name = extracted.get("name", "")
         email = extracted.get("email")
