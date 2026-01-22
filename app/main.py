@@ -1,21 +1,10 @@
 from fastapi import Depends, FastAPI
-from pydantic import BaseModel
-from typing import Optional
 from app.database import get_db
 
 app = FastAPI()
 
 # Pydantic models for request bodies
-class CompanyCreate(BaseModel):
-    name: str
-    industry: Optional[str] = None
 
-class ContactCreate(BaseModel):
-    first_name: str
-    last_name: str
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    company_id: Optional[int] = None
 
 @app.get("/")
 async def read_root():
