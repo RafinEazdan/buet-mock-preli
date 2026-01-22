@@ -36,6 +36,7 @@ markdown-it-py==4.0.0
 MarkupSafe==3.0.3
 mdurl==0.1.2
 numpy==2.3.4
+openai==1.57.4
 pandas==2.3.3
 passlib==1.7.4
 proto-plus==1.27.0

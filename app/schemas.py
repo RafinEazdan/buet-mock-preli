@@ -17,6 +17,7 @@ class ContactCreate(BaseModel):
 
 class ParseRequest(BaseModel):
     text: str
+    llm: Optional[str] = "gpt-4o-mini"
 
 class ParseResponse(BaseModel):
     name: Optional[str] = None
