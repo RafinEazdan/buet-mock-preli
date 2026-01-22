@@ -10,9 +10,9 @@ Welcome to the practice problem! This exercise will help you get familiar with t
 
 ### Setup Instructions
 
-1. **Clone the repository** (if not already done)
+1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/RafinEazdan/buet-mock-preli.git
    cd buet-mock-preli
    ```
 
@@ -20,7 +20,20 @@ Welcome to the practice problem! This exercise will help you get familiar with t
    ```bash
    cp .env.example .env
    ```
-   Then edit `.env` with your actual database credentials (or use the defaults provided).
+   
+   **Important:** The `.env.example` file contains default credentials that work out of the box. You can:
+   - **Option A:** Use the defaults as-is (fine for development/testing)
+   - **Option B:** Customize the credentials by editing `.env`:
+     ```env
+     POSTGRES_DB=your_database_name
+     POSTGRES_USER=your_username
+     POSTGRES_PASSWORD=your_secure_password
+     POSTGRES_HOST=db
+     POSTGRES_PORT=5432
+     DATABASE_URL=postgresql://your_username:your_password@db:5432/your_database_name
+     ```
+   
+   **Note:** If you change the database credentials, make sure the `DATABASE_URL` matches your `POSTGRES_*` variables.
 
 3. **Start all services with Docker**
    ```bash
@@ -28,7 +41,7 @@ Welcome to the practice problem! This exercise will help you get familiar with t
    ```
 
    This will start three services:
-   - **PostgreSQL database** on port 5434
+   - **PostgreSQL database** on port 5434 (host) → 5432 (container)
    - **FastAPI backend** on port 8000
    - **pgweb** (database UI) on port 8082
 
@@ -36,6 +49,17 @@ Welcome to the practice problem! This exercise will help you get familiar with t
    - API Health Check: http://localhost:8000/health
    - API Documentation: http://localhost:8000/docs
    - Database UI: http://localhost:8082
+
+### What You Need to Change
+
+For someone else to use this code, they only need to:
+
+1. ✅ **Have Docker installed** - No Python or PostgreSQL installation needed
+2. ✅ **Copy `.env.example` to `.env`** - Default values work fine
+3. ✅ **(Optional) Customize credentials** - Change database password in `.env` if desired
+4. ✅ **Run `docker compose up --build`** - That's it!
+
+**No code changes required!** Everything is containerized and configured through environment variables.
 
 ### Available API Endpoints
 
@@ -47,6 +71,35 @@ Welcome to the practice problem! This exercise will help you get familiar with t
 - `GET /companies/{company_id}` - Get company details with contacts
 
 #### POST Endpoints
+
+- `POST /parse` - **Extract and validate contact information from text using LLM**
+  ```json
+  {
+    "text": "Contact Jane Doe at jane.doe@global.com, phone: 555-234-5678",
+    "llm": "gpt-4o-mini"
+  }
+  ```
+  
+  **Response:**
+  ```json
+  {
+    "name": "Jane Doe",
+    "email": "jane.doe@global.com",
+    "phone": "555-234-5678",
+    "found_in_database": true,
+    "company": "Global Industries"
+  }
+  ```
+  
+  **Supported LLMs:**
+  - `gpt-4o-mini` (requires `OPENAI_API_KEY`)
+  - `gemini-2.5-flash` (requires `GEMINI_API_KEY`)
+  - `gemini-2.5-flash-preview` (requires `GEMINI_API_KEY`)
+  
+  **Note:** You need to set at least one API key in your `.env` file. Get keys from:
+  - OpenAI: https://platform.openai.com/api-keys
+  - Gemini: https://aistudio.google.com/app/apikey
+
 - `POST /companies` - Create a new company
   ```json
   {

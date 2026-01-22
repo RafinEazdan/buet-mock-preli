@@ -1,9 +1,74 @@
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from app.database import get_db
+from app.schemas import CompanyCreate, ContactCreate, ParseRequest, ParseResponse
+from app.llm import extract_contact_info
 
 app = FastAPI()
 
-# Pydantic models for request bodies
+
+@app.post("/parse", response_model=ParseResponse)
+def parse_contact(request: ParseRequest, db=Depends(get_db)):
+    """
+    Parse contact information from natural language text using LLM
+    and validate against the database.
+    """
+    try:
+        # Extract contact info using LLM
+        extracted = extract_contact_info(request.text, request.llm)
+        
+        name = extracted.get("name", "")
+        email = extracted.get("email")
+        phone = extracted.get("phone")
+        
+        # Search for contact in database by email or phone
+        found_in_database = False
+        company_name = None
+        
+        if email or phone:
+            query = """
+                SELECT 
+                    c.first_name || ' ' || c.last_name as full_name,
+                    c.email,
+                    c.phone,
+                    co.name as company_name
+                FROM contacts c
+                LEFT JOIN companies co ON c.company_id = co.company_id
+                WHERE 1=0
+            """
+            params = []
+            
+            if email:
+                query += " OR LOWER(c.email) = LOWER(%s)"
+                params.append(email)
+            
+            if phone:
+                query += " OR c.phone = %s"
+                params.append(phone)
+            
+            cursor = db.execute(query, tuple(params))
+            result = cursor.fetchone()
+            
+            if result:
+                found_in_database = True
+                company_name = result.get("company_name")
+                # Use database values when contact is found
+                if result.get("full_name"):
+                    name = result["full_name"]
+                if result.get("email"):
+                    email = result["email"]
+                if result.get("phone"):
+                    phone = result["phone"]
+        
+        return ParseResponse(
+            name=name,
+            email=email,
+            phone=phone,
+            found_in_database=found_in_database,
+            company=company_name
+        )
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
 
 
 @app.get("/")
