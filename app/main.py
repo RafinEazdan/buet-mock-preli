@@ -14,7 +14,7 @@ def parse_contact(request: ParseRequest, db=Depends(get_db)):
     """
     try:
         # Extract contact info using LLM
-        extracted = extract_contact_info(request.text, request.llm)
+        extracted = extract_contact_info(request.text)
         
         name = extracted.get("name", "")
         email = extracted.get("email")
@@ -78,7 +78,7 @@ async def read_root():
 @app.get("/health")
 def health_check(db=Depends(get_db)):
     db.execute("SELECT 1")
-    return {"status": "ok"}
+    return {"status": "ok", "database": "connected"}
 
 @app.get("/companies")
 def get_companies(db=Depends(get_db)):
