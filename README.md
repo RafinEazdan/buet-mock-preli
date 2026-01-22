@@ -67,6 +67,8 @@ For someone else to use this code, they only need to:
 
 The application includes a user-friendly React frontend that makes it easy to parse contact information without needing to understand the API.
 
+![Contact Parser UI](https://github.com/user-attachments/assets/f25ed4e5-d124-4f4d-bbe0-217092860008)
+
 #### Accessing the UI
 
 Once your services are running with `docker compose up --build`, open your browser and navigate to:
