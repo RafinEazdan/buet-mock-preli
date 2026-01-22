@@ -40,12 +40,14 @@ Welcome to the practice problem! This exercise will help you get familiar with t
    docker compose up --build
    ```
 
-   This will start three services:
+   This will start four services:
    - **PostgreSQL database** on port 5434 (host) → 5432 (container)
    - **FastAPI backend** on port 8000
+   - **React frontend** on port 3000
    - **pgweb** (database UI) on port 8082
 
 4. **Verify everything is running**
+   - Frontend UI: http://localhost:3000
    - API Health Check: http://localhost:8000/health
    - API Documentation: http://localhost:8000/docs
    - Database UI: http://localhost:8082
@@ -60,6 +62,50 @@ For someone else to use this code, they only need to:
 4. ✅ **Run `docker compose up --build`** - That's it!
 
 **No code changes required!** Everything is containerized and configured through environment variables.
+
+### Using the Frontend UI
+
+The application includes a user-friendly React frontend that makes it easy to parse contact information without needing to understand the API.
+
+#### Accessing the UI
+
+Once your services are running with `docker compose up --build`, open your browser and navigate to:
+
+**http://localhost:3000**
+
+#### How to Use
+
+1. **Enter Contact Information**: In the text area, type or paste natural language text containing contact details.
+   
+   Example:
+   ```
+   Contact Jane Doe at jane.doe@global.com, phone: 555-234-5678
+   ```
+
+2. **Parse Contact**: Click the "Parse Contact" button to extract the information.
+
+3. **View Results**: The UI will display:
+   - Extracted name
+   - Email address
+   - Phone number
+   - Whether the contact was found in the database
+   - Company name (if found in database)
+
+#### Features
+
+- **Clean, Modern Interface**: Easy-to-use design with clear visual feedback
+- **Loading States**: Visual spinner shows when the API is processing
+- **Error Handling**: User-friendly error messages if something goes wrong
+- **Database Validation**: Automatically checks if the contact exists in your database
+- **Responsive Design**: Works on desktop, tablet, and mobile devices
+
+#### Default LLM Model
+
+The frontend uses `gpt-4o-mini` as the default AI model. Make sure you have set `OPENAI_API_KEY` in your `.env` file. Alternatively, you can modify the code to use a Gemini model by changing the default in `frontend/src/App.js`.
+
+**Note**: To use the frontend with Gemini models instead of OpenAI, update the `llm` value in the API call in `App.js` to one of:
+- `gemini-2.5-flash`
+- `gemini-2.5-flash-preview`
 
 ### Available API Endpoints
 
@@ -138,6 +184,29 @@ To remove volumes (will delete database data):
 ```bash
 docker compose down -v
 ```
+
+### Running Frontend in Development Mode
+
+If you want to develop or modify the frontend separately:
+
+1. **Navigate to the frontend directory**:
+   ```bash
+   cd frontend
+   ```
+
+2. **Install dependencies** (only needed once):
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server**:
+   ```bash
+   npm start
+   ```
+
+4. **Open your browser** to http://localhost:3000
+
+**Note**: Make sure the backend API is running on http://localhost:8000 for the frontend to work properly.
 
 ---
 
