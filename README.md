@@ -2,6 +2,92 @@
 
 Welcome to the practice problem! This exercise will help you get familiar with the hackathon workflow, tooling, and evaluation process before tackling the main challenge.
 
+## Quick Start Guide
+
+### Prerequisites
+- Docker and Docker Compose installed
+- Git installed
+
+### Setup Instructions
+
+1. **Clone the repository** (if not already done)
+   ```bash
+   git clone <repository-url>
+   cd buet-mock-preli
+   ```
+
+2. **Create your environment file**
+   ```bash
+   cp .env.example .env
+   ```
+   Then edit `.env` with your actual database credentials (or use the defaults provided).
+
+3. **Start all services with Docker**
+   ```bash
+   docker compose up --build
+   ```
+
+   This will start three services:
+   - **PostgreSQL database** on port 5434
+   - **FastAPI backend** on port 8000
+   - **pgweb** (database UI) on port 8082
+
+4. **Verify everything is running**
+   - API Health Check: http://localhost:8000/health
+   - API Documentation: http://localhost:8000/docs
+   - Database UI: http://localhost:8082
+
+### Available API Endpoints
+
+#### GET Endpoints
+- `GET /` - Hello World
+- `GET /health` - Database health check
+- `GET /companies` - List all companies
+- `GET /contacts` - List all contacts with company info
+- `GET /companies/{company_id}` - Get company details with contacts
+
+#### POST Endpoints
+- `POST /companies` - Create a new company
+  ```json
+  {
+    "name": "Tech Startup Inc",
+    "industry": "Technology"
+  }
+  ```
+
+- `POST /contacts` - Create a new contact
+  ```json
+  {
+    "first_name": "Alice",
+    "last_name": "Johnson",
+    "email": "alice@example.com",
+    "phone": "555-999-8888",
+    "company_id": 1
+  }
+  ```
+
+### Testing the API
+
+You can test the API using:
+- **Swagger UI**: http://localhost:8000/docs
+- **curl**: 
+  ```bash
+  curl http://localhost:8000/companies
+  ```
+- **Browser**: Navigate to any GET endpoint
+
+### Stopping Services
+```bash
+docker compose down
+```
+
+To remove volumes (will delete database data):
+```bash
+docker compose down -v
+```
+
+---
+
 ## Problem Statement
 
 Build a REST API that:
