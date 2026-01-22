@@ -16,7 +16,8 @@ def parse_contact(request: ParseRequest, db=Depends(get_db)):
         # Extract contact info using LLM
         extracted = extract_contact_info(request.text)
         
-        name = extracted.get("name", "")
+        # Keep only the extracted values from the text
+        name = extracted.get("name")
         email = extracted.get("email")
         phone = extracted.get("phone")
         
@@ -50,14 +51,8 @@ def parse_contact(request: ParseRequest, db=Depends(get_db)):
             
             if result:
                 found_in_database = True
+                # Only get company name from database, keep extracted values
                 company_name = result.get("company_name")
-                # Use database values when contact is found
-                if result.get("full_name"):
-                    name = result["full_name"]
-                if result.get("email"):
-                    email = result["email"]
-                if result.get("phone"):
-                    phone = result["phone"]
         
         return ParseResponse(
             name=name,

@@ -12,7 +12,7 @@ def configure_gemini():
     genai.configure(api_key=api_key)
 
 
-def extract_contact_info(text: str, model_name: str = "gemini-2.5-flash") -> Dict[str, Optional[str]]:
+def extract_contact_info(text: str, model_name: str = "gemini-2.5-flash-lite") -> Dict[str, Optional[str]]:
     """
     Extract contact information from text using Gemini.
     
